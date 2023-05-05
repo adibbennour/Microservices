@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+ eurekaserver:
+   build: C:\Users\mabdelaali\Documents\workspace-spring-tool-suite-4-4.11.1.RELEASE\Microservices\EurekaServer
+   container_name: eureka
+   image: eureka
+   networks:
+      - eureka-server
+   ports:
+    - "8761:8761"
+    
+ microservice-employee:
+   build: C:\Users\mabdelaali\Documents\workspace-spring-tool-suite-4-4.11.1.RELEASE\Microservices\gestionEmployee
+  #  network_mode: host 
+   image: gestionemployee
+   ports:
+   - "5600:5600"
+   networks:
+      - eureka-server
+   environment:
+    - eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka
+   depends_on:
+     - eurekaserver
+ microservice-comment:
+   build: C:\Users\mabdelaali\Documents\workspace-spring-tool-suite-4-4.11.1.RELEASE\Microservices\gestionComment
+  #  network_mode: host 
+   image: gestioncomment
+   ports:
+   - "5700:5700"
+   networks:
+      - eureka-server
+   environment:
+    - eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka
+   depends_on:
+     - eurekaserver
+ microservice-gateway:
+   build: C:\Users\mabdelaali\Documents\workspace-spring-tool-suite-4-4.11.1.RELEASE\Microservices\gateway
+  #  network_mode: host 
+   image: gateway
+   ports:
+   - "8762:8762"
+   networks:
+      - eureka-server
+   environment:
+    - eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka
+   depends_on:
+     - eurekaserver
+networks:
+  eureka-server:
+    name: eureka-server
+    driver: bridge
